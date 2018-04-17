@@ -13,7 +13,7 @@ router.get('/', ensureAuthenticated, function(req, res) {
 			spotifyApi.getMyTopTracks()
 
 				.then(function(data) {
-					console.log(data.body.items);
+					console.log(req.user);
 					res.render('index', {
 						user: req.user,
 						tracks: data.body.items
