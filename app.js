@@ -50,5 +50,5 @@ app.use(function(err, req, res, next) {
 });
 
 http.listen(process.env.PORT || '8888', function(){
-  console.log('listening on *:8888');
+  console.log('listening on port:8888');
 });
