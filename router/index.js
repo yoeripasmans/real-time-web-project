@@ -11,17 +11,18 @@ router.get('/', ensureAuthenticated, function(req, res) {
 			spotifyApi.setAccessToken(req.user.accessToken);
 
 			spotifyApi.getMyTopTracks()
-			
+
 				.then(function(data) {
+					console.log(data.body.items);
 					res.render('index', {
 						user: req.user,
 						tracks: data.body.items
 					});
 						return data;
 					}).then(function(data) {
-						spotifyApi.play({
-							uris: [data.body.items[Math.floor(Math.random() * data.body.items.length)].uri]
-						});
+						// spotifyApi.play({
+						// 	uris: [data.body.items[Math.floor(Math.random() * data.body.items.length)].uri]
+						// });
 
 					}).catch(function(error) {
 						console.error(error);
@@ -43,7 +44,7 @@ router.get('/', ensureAuthenticated, function(req, res) {
 
 		router.get('/auth/spotify',
 			passport.authenticate('spotify', {
-				scope: ['user-read-private user-read-email user-read-playback-state user-modify-playback-state user-top-read'],
+				scope: ['streaming user-read-birthdate user-read-private user-read-email user-read-playback-state user-modify-playback-state user-top-read'],
 				showDialog: true
 			}),
 			function(req, res) {
