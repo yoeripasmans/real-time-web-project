@@ -11,6 +11,7 @@ router.get('/', ensureAuthenticated, function(req, res) {
 			spotifyApi.setAccessToken(req.user.accessToken);
 
 			spotifyApi.getMyTopTracks()
+			
 				.then(function(data) {
 					res.render('index', {
 						user: req.user,
