@@ -1,5 +1,7 @@
 var socket = io();
 
+console.log(playList);
+
 window.onSpotifyWebPlaybackSDKReady = () => {
 	const player = new Spotify.Player({
 		name: 'Web Playback SDK Quick Start Player',
@@ -46,6 +48,8 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 	// Connect to the player!
 	player.connect();
 
+		console.log(player);
+
 	const play = ({
 		spotify_uri,
 		playerInstance: {
@@ -70,17 +74,60 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 		});
 	};
 	document.querySelector('.play-button').addEventListener('click', function() {
+		socket.emit('play');
+	});
+
+	document.querySelector('.pause-button').addEventListener('click', function() {
+		socket.emit('pause');
+	});
+
+	document.querySelector('.resume-button').addEventListener('click', function() {
+		socket.emit('resume');
+	});
+
+	document.querySelector('.next-button').addEventListener('click', function() {
+		socket.emit('nextTrack');
+	});
+
+	document.querySelector('.prev-button').addEventListener('click', function() {
+		socket.emit('prevTrack');
+	});
+
+	socket.on('play', function() {
 		play({
 			playerInstance: player,
-			spotify_uri: favtrack,
+			spotify_uri: playList[1].uri,
 		});
 	});
 
-	document.querySelector('.pauze-button').addEventListener('click', function() {
-		player.pause().then(() => {
-			console.log('Paused!');
-		});
+	socket.on('pause', function() {
+		player.pause();
 	});
 
+	socket.on('resume', function() {
+		player.resume();
+	});
+
+	socket.on('nextTrack', function() {
+		player.nextTrack();
+	});
+
+	socket.on('prevTrack', function() {
+		player.previousTrack();
+	});
 
 };
+
+socket.on('playList', function(data) {
+	playList = data.playList;
+	//Create playlist
+	var list = document.createElement('ul');
+	document.body.appendChild(list);
+
+	for (var i = 0; i < playList.length; i++) {
+		var item = document.createElement('li');
+		item.textContent = playList[i].name;
+		list.appendChild(item);
+	}
+	console.log(data);
+});

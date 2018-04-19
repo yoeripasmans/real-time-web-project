@@ -2,30 +2,58 @@
 <html>
 
 <head>
-	<title>Spotify together</title>
-	<link rel="stylesheet" href="css/style.css">
+    <title>Spotify together</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
-	<img src="<%= user.photos[0]%>" alt="">
-	<h2>Hello, <%= user.username %>.</h2>
-	<p>Your email is
-		<%= user.emails[0].value %>
-	</p>
-	<p>Your fav track is
-		<%= tracks[0].name %>
-	</p>
+    <img src="<%= user.photos[0]%>" alt="">
+    <h2>Hello, <%= user.username %>.</h2>
+    <p>Your email is
+        <%= user.emails[0].value %>
+    </p>
+    <h4>These are your favorite tracks</h4>
+    <ul>
+        <% for(var i=0; i < tracks.length; i++) { %>
 
-	<button class="play-button">Play</button>
-	<button class="pauze-button">Pauze</button>
+            <li>
+                <span><%=  tracks[i].name %></span>
+                <button class="add-button">Add to playlist</button>
+            </li>
 
-	<script>
-		var token = <%- JSON.stringify(user.accessToken) %>
-		var favtrack = <%- JSON.stringify(tracks[0].uri) %>
-	</script>
-	<script src="https://sdk.scdn.co/spotify-player.js"></script>
-	<script src="/socket.io/socket.io.js"></script>
-	<script src="js/client.js"></script>
+            <% } %>
+    </ul>
+
+    <h4>Playlist</h4>
+    <ul>
+        <% for(var i=0; i < playList.length; i++) { %>
+
+            <li>
+                <span><%=  playList[i].name %></span>
+
+            </li>
+
+            <% } %>
+    </ul>
+
+
+    <button class="play-button">Start player</button>
+    <button class="prev-button">Previous</button>
+    <button class="pause-button">Pauze</button>
+    <button class="resume-button">Resume</button>
+    <button class="next-button">Next</button>
+
+    <script>
+        var token =
+            <%- JSON.stringify(user.accessToken) %>
+        var favtrack =
+            <%- JSON.stringify(tracks[0].uri) %>
+        var playList =
+            <%- JSON.stringify(playList) %>
+    </script>
+    <script src="https://sdk.scdn.co/spotify-player.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/client.js"></script>
 </body>
 
 </html>

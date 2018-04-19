@@ -1,6 +1,21 @@
 # real-time-web-project - Spotify together
 
-In this application users can create a real time playlist which plays on every connected user. Users can add tracks to the playlist based on their favorite tracks/albums/artist.
+In this application users can create a real time playlist which plays on every connected user. Users can add tracks to the playlist based on their favorite tracks/albums/artists.
+
+[Link to demo](https://real-time-beatmaker.herokuapp.com/)
+
+## Getting started
+
+1.  Clone the repo `git clone`.
+2.  Install dependencies `npm install`.
+3.  Run `npm start` to start server on port 3000.
+
+## Features
+- See your own details.
+- Add tracks to global playlist.
+- See who's online.
+- Real time data of the users
+
 
 This repo will hold the project you're going to build during the last two weeks of RTW. It functions as a way to show you've attained the following learning goals of this course:
 
