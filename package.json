@@ -15,6 +15,7 @@
         "express-session": "1.4.0",
         "http-errors": "~1.6.2",
         "method-override": "2.0.2",
+        "mongoose": "^5.0.15",
         "morgan": "~1.9.0",
         "passport": "~0.2.0",
         "passport-spotify": "^1.0.0",

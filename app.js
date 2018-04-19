@@ -6,6 +6,7 @@ var logger = require('morgan');
 var session = require('express-session');
 var router = require('./router/index');
 var passport = require('passport');
+var db = require('./models/index');
 
 var app = express();
 var http = require('http').Server(app);
@@ -40,23 +41,23 @@ app.use('/', router);
 io.on('connection', function(socket) {
 	console.log('a user connected');
 
-	socket.on('play', function(sound) {
+	socket.on('play', function() {
 		io.sockets.emit('play');
 	});
 
-	socket.on('pause', function(sound) {
+	socket.on('pause', function() {
 		io.sockets.emit('pause');
 	});
 
-	socket.on('resume', function(sound) {
+	socket.on('resume', function() {
 		io.sockets.emit('resume');
 	});
 
-	socket.on('nextTrack', function(sound) {
+	socket.on('nextTrack', function() {
 		io.sockets.emit('nextTrack');
 	});
 
-	socket.on('prevTrack', function(sound) {
+	socket.on('prevTrack', function() {
 		io.sockets.emit('prevTrack');
 	});
 	//Disconnect

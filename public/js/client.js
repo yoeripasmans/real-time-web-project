@@ -48,8 +48,6 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 	// Connect to the player!
 	player.connect();
 
-		console.log(player);
-
 	const play = ({
 		spotify_uri,
 		playerInstance: {
@@ -73,25 +71,6 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 			});
 		});
 	};
-	document.querySelector('.play-button').addEventListener('click', function() {
-		socket.emit('play');
-	});
-
-	document.querySelector('.pause-button').addEventListener('click', function() {
-		socket.emit('pause');
-	});
-
-	document.querySelector('.resume-button').addEventListener('click', function() {
-		socket.emit('resume');
-	});
-
-	document.querySelector('.next-button').addEventListener('click', function() {
-		socket.emit('nextTrack');
-	});
-
-	document.querySelector('.prev-button').addEventListener('click', function() {
-		socket.emit('prevTrack');
-	});
 
 	socket.on('play', function() {
 		play({
@@ -117,6 +96,44 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 	});
 
 };
+
+//Events
+
+document.querySelector('.play-button').addEventListener('click', function() {
+	socket.emit('play');
+});
+
+document.querySelector('.pause-button').addEventListener('click', function() {
+	socket.emit('pause');
+});
+
+document.querySelector('.resume-button').addEventListener('click', function() {
+	socket.emit('resume');
+});
+
+document.querySelector('.next-button').addEventListener('click', function() {
+	socket.emit('nextTrack');
+});
+
+document.querySelector('.prev-button').addEventListener('click', function() {
+	socket.emit('prevTrack');
+});
+
+var addButton = document.querySelectorAll('.add-button');
+for (var i = 0; i < addButton.length; i++) {
+	addButton[i].addEventListener('click', addToPlaylist);
+}
+
+function addToPlaylist() {
+	socket.emit('addToPlaylist', this.getAttribute('data-id'));
+}
+
+socket.on('addToPlaylist', function(data) {
+	var list = document.querySelector('.playlist');
+	var item = document.createElement('li');
+	item.textContent = data.name;
+	list.appendChild(item);
+});
 
 socket.on('playList', function(data) {
 	playList = data.playList;

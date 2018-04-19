@@ -24,12 +24,20 @@ router.get('/', ensureAuthenticated, function(req, res) {
 		}).then(function(data) {
 			var playList = data.body.tracks;
 			console.log(playList);
-			// req.io.on('connection', function(socket) {
-			// 	socket.emit('playList', {
-			// 		playList: playList
-			// 	});
-			// });
-			
+
+			req.io.on('connection', function(socket) {
+				socket.on('addToPlaylist', function(track) {
+					spotifyApi.getTrack(track)
+						.then(function(data) {
+							var addedTrack = data.body;
+							playList.push(addedTrack);
+							req.io.sockets.emit('addToPlaylist', addedTrack);
+						}).catch(function(error) {
+							console.error(error);
+						});
+				});
+			});
+
 			res.render('index', {
 				user: req.user,
 				tracks: topTracks,

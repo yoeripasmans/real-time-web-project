@@ -18,14 +18,14 @@
 
             <li>
                 <span><%=  tracks[i].name %></span>
-                <button class="add-button">Add to playlist</button>
+                <button class="add-button" data-id="<%=  tracks[i].id %>">Add to playlist</button>
             </li>
 
             <% } %>
     </ul>
 
     <h4>Playlist</h4>
-    <ul>
+    <ul class="playlist">
         <% for(var i=0; i < playList.length; i++) { %>
 
             <li>
