@@ -26,18 +26,40 @@ function auth() {
 			process.nextTick(function() {
 				console.log(profile);
 
-				User.findOrCreate({
-					spotifyId: profile.id,
-					username: profile.username,
-					displayName: profile.displayName,
-					email: profile.emails[0].value,
-					profilePic: profile.photos[0],
-					accessToken: accessToken,
-					refreshToken: refreshToken,
-				}, function(err, user) {
-					console.log('A new uxer from "%s" was inserted', user.spotifyId);
-					return done(null, user);
+				User.findOne({
+					spotifyId: profile.id
+				}).then(function(currentUser) {
+					if (currentUser) {
+						console.log('currentuser');
+						return done(null, currentUser);
+					} else {
+						new User({
+							spotifyId: profile.id,
+							username: profile.username,
+							displayName: profile.displayName,
+							email: profile.emails[0].value,
+							profilePic: profile.photos[0],
+							accessToken: accessToken,
+							refreshToken: refreshToken,
+						}).save().then(function(newUser) {
+							console.log('newuser');
+							return done(null, newUser);
+						})
+					}
 				});
+
+				// User.findOrCreate({
+				// 	spotifyId: profile.id,
+				// 	username: profile.username,
+				// 	displayName: profile.displayName,
+				// 	email: profile.emails[0].value,
+				// 	profilePic: profile.photos[0],
+				// 	accessToken: accessToken,
+				// 	refreshToken: refreshToken,
+				// }, function(err, user) {
+				// 	console.log('A new uxer from "%s" was inserted', user.spotifyId);
+				// 	return done(null, user);
+				// });
 
 
 				// profile.accessToken = accessToken;
