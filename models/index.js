@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
+var User = require('./../models/user');
 //Set up default mongoose connection
-var mongoDB = 'mongodb://127.0.0.1/spotify';
+var mongoDB = process.env.dbURI;
 mongoose.connect(mongoDB);
 // Get Mongoose to use the global promise library
 mongoose.Promise = global.Promise;

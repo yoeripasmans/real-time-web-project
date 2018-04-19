@@ -12,7 +12,6 @@ var spotifyApi = new SpotifyWebApi();
 
 router.get('/', ensureAuthenticated, function(req, res) {
 
-	console.log(playList);
 	//Set the acces token of the user
 	spotifyApi.setAccessToken(req.user.accessToken);
 
@@ -23,7 +22,6 @@ router.get('/', ensureAuthenticated, function(req, res) {
 			return spotifyApi.getTracks(playList);
 		}).then(function(data) {
 			var playList = data.body.tracks;
-			console.log(playList);
 
 			req.io.on('connection', function(socket) {
 				socket.on('addToPlaylist', function(track) {
@@ -65,7 +63,7 @@ router.get('/login', function(req, res) {
 router.get('/auth/spotify',
 	passport.authenticate('spotify', {
 		scope: ['streaming user-read-birthdate user-read-private user-read-email user-read-playback-state user-modify-playback-state user-top-read'],
-		showDialog: true
+		showDialog: false
 	}),
 	function(req, res) {
 		// The request will be redirected to spotify for authentication, so this
