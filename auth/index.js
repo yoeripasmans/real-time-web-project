@@ -1,5 +1,6 @@
 var passport = require('passport');
 var SpotifyStrategy = require('passport-spotify').Strategy;
+var refresh = require('spotify-refresh');
 var User = require('../models/user');
 
 var client_id = process.env.CLIENT_ID; // Your client id
@@ -31,7 +32,13 @@ function auth() {
 				}).then(function(currentUser) {
 					if (currentUser) {
 						console.log('currentuser');
-						return done(null, currentUser);
+						currentUser.accessToken = accessToken;
+						currentUser.save().then(function(currentUser) {
+							return done(null, currentUser);
+						}).catch(function(err) {
+							console.log(err);
+						});
+
 					} else {
 						new User({
 							spotifyId: profile.id,
@@ -44,7 +51,9 @@ function auth() {
 						}).save().then(function(newUser) {
 							console.log('newuser');
 							return done(null, newUser);
-						})
+						}).catch(function(err) {
+							console.log(err);
+						});
 					}
 				});
 
@@ -66,6 +75,7 @@ function auth() {
 				// return done(null, profile);
 			});
 		}));
+
 }
 
 module.exports.auth = auth;

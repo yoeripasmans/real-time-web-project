@@ -19,8 +19,10 @@
         "mongoose-findorcreate": "^3.0.0",
         "morgan": "~1.9.0",
         "passport": "~0.2.0",
+        "passport-oauth2-refresh": "^1.0.0",
         "passport-spotify": "^1.0.0",
         "socket.io": "^2.1.0",
+        "spotify-refresh": "^2.0.3",
         "spotify-web-api-node": "^3.0.0"
     }
 }
