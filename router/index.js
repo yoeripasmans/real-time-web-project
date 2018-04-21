@@ -18,7 +18,16 @@ router.get('/', ensureAuthenticated, function(req, res) {
 		//Get playlist from the database
 		.then(function() {
 			return Playlist.find({});
+		}).then(function(playList){
+			// var uri = playList.map(a => a.uri);
+			//
+			// // console.log(playList.uri);
+			// req.spotifyApi.play({
+			// 	uris: uri
+			// });
+			return playList;
 		})
+
 
 		.then(function(playList) {
 			res.render('index', {

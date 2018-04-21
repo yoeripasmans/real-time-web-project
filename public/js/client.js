@@ -1,12 +1,14 @@
 var socket = io();
-console.log(playList);
-var currentTrack;
 
 window.onSpotifyWebPlaybackSDKReady = () => {
 	const player = new Spotify.Player({
 		name: 'Web Playback SDK Quick Start Player',
 		getOAuthToken: cb => {
 			cb(token);
+		},
+		paused: true,
+		track_window: {
+			current_track: playList[0]
 		}
 	});
 
@@ -41,9 +43,9 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 	player.addListener('ready', ({
 		device_id
 	}) => {
+
 		console.log('Ready with Device ID', device_id);
 	});
-
 
 	// Connect to the player!
 	player.connect();
@@ -72,11 +74,13 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 		});
 	};
 
-	socket.on('play', function(currentTrack) {
+	socket.on('play', function(playIndex) {
 		play({
 			playerInstance: player,
-			spotify_uri: playList[currentTrack].uri,
+			spotify_uri: playList[playIndex].uri,
 		});
+
+		// player.pause();
 	});
 
 	socket.on('pause', function() {
@@ -87,19 +91,19 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 		player.resume();
 	});
 
-	socket.on('nextTrack', function(currentTrack) {
-		console.log(currentTrack);
+	socket.on('nextTrack', function(playIndex) {
+		console.log(playIndex);
 		play({
 			playerInstance: player,
-			spotify_uri: playList[currentTrack].uri,
+			spotify_uri: playList[playIndex].uri,
 		});
 	});
 
-	socket.on('prevTrack', function(currentTrack) {
-		console.log(currentTrack);
+	socket.on('prevTrack', function(playIndex) {
+		console.log(playIndex);
 		play({
 			playerInstance: player,
-			spotify_uri: playList[currentTrack].uri,
+			spotify_uri: playList[playIndex].uri,
 		});
 	});
 
@@ -110,12 +114,12 @@ document.querySelector('.play-button').addEventListener('click', function() {
 	socket.emit('play', 0);
 });
 
-document.querySelector('.next-button').addEventListener('click', function() {
-	socket.emit('nextTrack');
+document.querySelector('.next-button').addEventListener('click', function(playlist) {
+	socket.emit('nextTrack', playList);
 });
 
 document.querySelector('.prev-button').addEventListener('click', function() {
-	socket.emit('prevTrack');
+	socket.emit('prevTrack', playList);
 });
 
 document.querySelector('.pause-button').addEventListener('click', function() {
@@ -125,6 +129,18 @@ document.querySelector('.pause-button').addEventListener('click', function() {
 document.querySelector('.resume-button').addEventListener('click', function() {
 	socket.emit('resume');
 });
+
+//Create eventlistener to add playbuttons
+var removeButton = document.querySelectorAll('.remove-button');
+for (var i = 0; i < removeButton.length; i++) {
+	removeButton[i].addEventListener('click', removeFromPlaylist);
+}
+
+//Emit clicked track with the id of that track.
+function removeFromPlaylist() {
+	console.log(this);
+	socket.emit('removeFromPlaylist', this.getAttribute('data-id'));
+}
 
 //Create eventlistener to add playbuttons
 var addButton = document.querySelectorAll('.add-button');
@@ -138,8 +154,35 @@ function addToPlaylist() {
 }
 
 socket.on('addToPlaylist', function(data) {
+	playList.push(data);
 	var list = document.querySelector('.playlist');
+
 	var item = document.createElement('li');
-	item.textContent = data.name;
+	item.classList.add("playlist__track");
+	item.setAttribute("data-id", data._id);
 	list.appendChild(item);
+
+	var itemText = document.createElement('span');
+	itemText.textContent = data.name;
+	item.appendChild(itemText);
+
+	var removeButton = document.createElement('button');
+	removeButton.textContent = "Remove from playlist";
+	removeButton.setAttribute("data-id", data._id);
+	item.appendChild(removeButton);
+	removeButton.addEventListener('click', removeFromPlaylist);
+
+});
+
+socket.on('removeFromPlaylist', function(id) {
+	var playlist = document.querySelector('.playlist');
+	var tracks = document.querySelectorAll(".playlist__track");
+
+	for (var i = 0; i < tracks.length; i++) {
+		if (tracks[i].getAttribute("data-id") == id) {
+			playlist.removeChild(tracks[i]);
+			playList.splice(tracks[i], 1);
+			break;
+		}
+	}
 });

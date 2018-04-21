@@ -2,60 +2,57 @@
 <html>
 
 <head>
-    <title>Spotify together</title>
-    <link rel="stylesheet" href="css/style.css">
+	<title>Spotify together</title>
+	<link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
-    <img src="<%= user.profilePic %>" alt="">
-    <h2>Hello, <%= user.username %>.</h2>
-    <p>Your email is
-        <%= user.email %>
-    </p>
-    <h4>These are your favorite tracks</h4>
-    <ul>
-        <% for(var i=0; i < tracks.length; i++) { %>
+	<header>
+		<img src="<%= user.profilePic %>" width="20px" alt="">
+		<h2><%= user.username %>.</h2>
+		<a href="/logout">Log out</a>
+	</header>
+	<main>
+		<h4>These are your favorite tracks</h4>
+		<ul>
+			<% for(var i=0; i < tracks.length; i++) { %>
 
-            <li>
-                <span><%= tracks[i].name %></span>
-                <button class="add-button" data-id="<%=  tracks[i].id %>">Add to playlist</button>
-            </li>
+				<li>
+					<span><%= tracks[i].name %></span>
+					<button class="add-button" data-id="<%=  tracks[i].id %>">Add to playlist</button>
+				</li>
 
-            <% } %>
-    </ul>
+				<% } %>
+		</ul>
 
-    <h4>Playlist</h4>
-    <ul class="playlist">
-        <% for(var i=0; i < playList.length; i++) { %>
+		<h4>Playlist</h4>
+		<ul class="playlist">
+			<% for(var i=0; i < playList.length; i++) { %>
 
-            <li>
-                <span><%=  playList[i].name %></span>
+				<li class="playlist__track" data-id="<%=  playList[i]._id %>">
+					<span><%=  playList[i].name %></span>
+					<button class="remove-button" data-id="<%=  playList[i]._id %>">Remove from playlist</button>
+				</li>
 
-            </li>
-
-            <% } %>
-    </ul>
-
-
-    <button class="play-button">Start player</button>
-    <button class="prev-button">Previous</button>
-    <button class="pause-button">Pauze</button>
-    <button class="resume-button">Resume</button>
-    <button class="next-button">Next</button>
-
-	<a href="/logout">Log out</a>
-
-    <script>
-        var token =
-            <%- JSON.stringify(user.accessToken) %>
-        var favtrack =
-            <%- JSON.stringify(tracks[0].uri) %>
-        var playList =
-            <%- JSON.stringify(playList) %>
-    </script>
-    <script src="https://sdk.scdn.co/spotify-player.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="js/client.js"></script>
+				<% } %>
+		</ul>
+		<h4>Currentrack</h4>
+		<div class="player-controls">
+			<button class="play-button">Start player</button>
+			<button class="prev-button">Previous</button>
+			<button class="pause-button">Pauze</button>
+			<button class="resume-button">Resume</button>
+			<button class="next-button">Next</button>
+		</div>
+	</main>
+	<script>
+		var token =
+			<%- JSON.stringify(user.accessToken) %>
+		var playList = <%- JSON.stringify(playList) %>
+	</script>
+	<script src="https://sdk.scdn.co/spotify-player.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="js/client.js"></script>
 </body>
 
 </html>
