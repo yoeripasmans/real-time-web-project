@@ -1,6 +1,6 @@
 var socket = io();
-
 console.log(playList);
+var currentTrack;
 
 window.onSpotifyWebPlaybackSDKReady = () => {
 	const player = new Spotify.Player({
@@ -72,10 +72,10 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 		});
 	};
 
-	socket.on('play', function() {
+	socket.on('play', function(currentTrack) {
 		play({
 			playerInstance: player,
-			spotify_uri: playList[1].uri,
+			spotify_uri: playList[currentTrack].uri,
 		});
 	});
 
@@ -87,28 +87,27 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 		player.resume();
 	});
 
-	socket.on('nextTrack', function() {
-		player.nextTrack();
+	socket.on('nextTrack', function(currentTrack) {
+		console.log(currentTrack);
+		play({
+			playerInstance: player,
+			spotify_uri: playList[currentTrack].uri,
+		});
 	});
 
-	socket.on('prevTrack', function() {
-		player.previousTrack();
+	socket.on('prevTrack', function(currentTrack) {
+		console.log(currentTrack);
+		play({
+			playerInstance: player,
+			spotify_uri: playList[currentTrack].uri,
+		});
 	});
 
 };
 
 //Events
-
 document.querySelector('.play-button').addEventListener('click', function() {
-	socket.emit('play');
-});
-
-document.querySelector('.pause-button').addEventListener('click', function() {
-	socket.emit('pause');
-});
-
-document.querySelector('.resume-button').addEventListener('click', function() {
-	socket.emit('resume');
+	socket.emit('play', 0);
 });
 
 document.querySelector('.next-button').addEventListener('click', function() {
@@ -119,11 +118,21 @@ document.querySelector('.prev-button').addEventListener('click', function() {
 	socket.emit('prevTrack');
 });
 
+document.querySelector('.pause-button').addEventListener('click', function() {
+	socket.emit('pause');
+});
+
+document.querySelector('.resume-button').addEventListener('click', function() {
+	socket.emit('resume');
+});
+
+//Create eventlistener to add playbuttons
 var addButton = document.querySelectorAll('.add-button');
 for (var i = 0; i < addButton.length; i++) {
 	addButton[i].addEventListener('click', addToPlaylist);
 }
 
+//Emit clicked track with the id of that track.
 function addToPlaylist() {
 	socket.emit('addToPlaylist', this.getAttribute('data-id'));
 }
@@ -133,18 +142,4 @@ socket.on('addToPlaylist', function(data) {
 	var item = document.createElement('li');
 	item.textContent = data.name;
 	list.appendChild(item);
-});
-
-socket.on('playList', function(data) {
-	playList = data.playList;
-	//Create playlist
-	var list = document.createElement('ul');
-	document.body.appendChild(list);
-
-	for (var i = 0; i < playList.length; i++) {
-		var item = document.createElement('li');
-		item.textContent = playList[i].name;
-		list.appendChild(item);
-	}
-	console.log(data);
 });

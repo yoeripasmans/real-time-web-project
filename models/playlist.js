@@ -4,13 +4,9 @@ var Schema = mongoose.Schema;
 
 // create a schema
 var trackSchema = new Schema({
-   spotifyId: String,
-   username: String,
-   email: String,
-   accessToken: String,
-   profilePic: String,
-   refreshToken: String
-
+   name: String,
+   id: String,
+   uri: String,
 });
 // the schema is useless so far
 // we need to create a model using it

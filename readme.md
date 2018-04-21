@@ -2,7 +2,7 @@
 
 In this application users can create a real time playlist which plays on every connected user. This way you can listen to your self made playlist together! Users can add tracks to the playlist based on their favorite tracks/albums/artists.
 
-[Link to demo](https://real-time-beatmaker.herokuapp.com/)
+[Link to demo](https://spotify-together.herokuapp.com/)
 
 ## Getting started
 
@@ -17,11 +17,13 @@ In this application users can create a real time playlist which plays on every c
 - Real time player
 
 
-This repo will hold the project you're going to build during the last two weeks of RTW. It functions as a way to show you've attained the following learning goals of this course:
+
+
+<!-- This repo will hold the project you're going to build during the last two weeks of RTW. It functions as a way to show you've attained the following learning goals of this course:
 
 * Build a Node Web App which consumes an external data source through an API and serves a frontend using routing and templating techniques.
 * Create a "live" web app which reflects changes to the back-end data model in reactive front-end views, using real-time, event-based, messaging technologies like sockets or server-sent-events.
-* Describe their work in a professional readme with insightful diagrams showing the life cycle of their data.
+* Describe their work in a professional readme with insightful diagrams showing the life cycle of their data. -->
 
 <!-- ☝️ replace this description -->
 

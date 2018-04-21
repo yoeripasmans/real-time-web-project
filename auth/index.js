@@ -3,12 +3,12 @@ var SpotifyStrategy = require('passport-spotify').Strategy;
 var refresh = require('spotify-refresh');
 var User = require('../models/user');
 
-var client_id = process.env.CLIENT_ID; // Your client id
-var client_secret = process.env.CLIENT_SECRET; // Your secret
-var redirect_uri = process.env.REDIRECT_URI; // Your redirect uri
+var client_id = process.env.CLIENT_ID; // My client id
+var client_secret = process.env.CLIENT_SECRET; // My secret
+var redirect_uri = process.env.REDIRECT_URI; // My redirect uri
 
 function auth() {
-
+	//Serialize users into and deserialize users out of the session.  By storing the user when serializing, and finding the user when deserializing.
 	passport.serializeUser(function(user, done) {
 		done(null, user);
 	});
@@ -16,29 +16,27 @@ function auth() {
 	passport.deserializeUser(function(obj, done) {
 		done(null, obj);
 	});
-
+	// Use the SpotifyStrategy within Passport.
 	passport.use(new SpotifyStrategy({
 			clientID: client_id,
 			clientSecret: client_secret,
 			callbackURL: redirect_uri
 		},
 		function(accessToken, refreshToken, expires_in, profile, done) {
-			// asynchronous verification, for effect...
+			// Asynchronous verification
 			process.nextTick(function() {
-				console.log(profile);
-
+				//If user exist in database associate the spotify account with a user record in the database and return that user.
 				User.findOne({
 					spotifyId: profile.id
 				}).then(function(currentUser) {
 					if (currentUser) {
-						console.log('currentuser');
 						currentUser.accessToken = accessToken;
 						currentUser.save().then(function(currentUser) {
 							return done(null, currentUser);
 						}).catch(function(err) {
 							console.log(err);
 						});
-
+					//If user doesn't exist in database create a new user record with the spotify account details.
 					} else {
 						new User({
 							spotifyId: profile.id,
@@ -49,7 +47,6 @@ function auth() {
 							accessToken: accessToken,
 							refreshToken: refreshToken,
 						}).save().then(function(newUser) {
-							console.log('newuser');
 							return done(null, newUser);
 						}).catch(function(err) {
 							console.log(err);
@@ -79,3 +76,5 @@ function auth() {
 }
 
 module.exports.auth = auth;
+
+//Auth based on this example https://github.com/JMPerez/passport-spotify/blob/master/examples/login/app.js

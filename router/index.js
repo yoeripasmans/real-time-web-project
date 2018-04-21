@@ -4,9 +4,7 @@ var passport = require('passport');
 var SpotifyWebApi = require('spotify-web-api-node');
 var auth = require('../auth/index').auth();
 var router = express.Router();
-
-
-var playList = ["6gBFPUFcJLzWGx4lenP6h2", "6sTDhYVVXU3HSDuG7mBLRU", "3qKCDFZp192KBEEtFj7fDa"];
+var Playlist = require('../models/playlist');
 var topTracks;
 var spotifyApi = new SpotifyWebApi();
 
@@ -14,21 +12,33 @@ router.get('/', ensureAuthenticated, function(req, res) {
 
 	//Set the acces token of the user
 	spotifyApi.setAccessToken(req.user.accessToken);
-
+	//Get users top tracks
 	spotifyApi.getMyTopTracks()
-
 		.then(function(data) {
 			topTracks = data.body.items;
-			return spotifyApi.getTracks(playList);
-		}).then(function(data) {
-			var playList = data.body.tracks;
+		}).then(function() {
+			return Playlist.find({});
+		})
+
+		.then(function(data) {
+
+			var playList = data;
 
 			req.io.on('connection', function(socket) {
+
+				console.log(req.user.username, 'connected');
+
 				socket.on('addToPlaylist', function(track) {
 					spotifyApi.getTrack(track)
 						.then(function(data) {
 							var addedTrack = data.body;
-							playList.push(addedTrack);
+							console.log(addedTrack);
+							new Playlist({
+								id: addedTrack.id,
+								uri: addedTrack.uri,
+								name: addedTrack.name,
+							}).save();
+
 							req.io.sockets.emit('addToPlaylist', addedTrack);
 						}).catch(function(error) {
 							console.error(error);
@@ -63,7 +73,7 @@ router.get('/login', function(req, res) {
 router.get('/auth/spotify',
 	passport.authenticate('spotify', {
 		scope: ['streaming user-read-birthdate user-read-private user-read-email user-read-playback-state user-modify-playback-state user-top-read'],
-		showDialog: true
+		showDialog: false
 	}),
 	function(req, res) {
 		// The request will be redirected to spotify for authentication, so this

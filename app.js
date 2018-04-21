@@ -38,11 +38,26 @@ app.use(function(req,res,next){
 
 app.use('/', router);
 
-io.on('connection', function(socket) {
-	console.log('a user connected');
 
-	socket.on('play', function() {
-		io.sockets.emit('play');
+io.on('connection', function(socket) {
+	var currentTrack;
+
+	socket.on('play', function(id) {
+		currentTrack = id;
+		console.log(currentTrack);
+		io.sockets.emit('play', currentTrack);
+	});
+
+	socket.on('nextTrack', function() {
+		currentTrack++;
+		console.log(currentTrack);
+		io.sockets.emit('nextTrack', currentTrack);
+	});
+
+	socket.on('prevTrack', function() {
+		currentTrack--;
+		console.log(currentTrack);
+		io.sockets.emit('prevTrack', currentTrack);
 	});
 
 	socket.on('pause', function() {
@@ -51,14 +66,6 @@ io.on('connection', function(socket) {
 
 	socket.on('resume', function() {
 		io.sockets.emit('resume');
-	});
-
-	socket.on('nextTrack', function() {
-		io.sockets.emit('nextTrack');
-	});
-
-	socket.on('prevTrack', function() {
-		io.sockets.emit('prevTrack');
 	});
 	//Disconnect
 	socket.on('disconnect', function(data) {
