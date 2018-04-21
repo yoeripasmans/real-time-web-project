@@ -1,51 +1,26 @@
 var express = require('express');
 var dotenv = require('dotenv').config();
 var passport = require('passport');
-var SpotifyWebApi = require('spotify-web-api-node');
 var auth = require('../auth/index').auth();
 var router = express.Router();
 var Playlist = require('../models/playlist');
-var topTracks;
-var spotifyApi = new SpotifyWebApi();
 
 router.get('/', ensureAuthenticated, function(req, res) {
-
+	var topTracks;
 	//Set the acces token of the user
-	spotifyApi.setAccessToken(req.user.accessToken);
-	//Get users top tracks
-	spotifyApi.getMyTopTracks()
+	req.spotifyApi.setAccessToken(req.user.accessToken);
+
+	//Get users top tracks and save it in variable
+	req.spotifyApi.getMyTopTracks()
 		.then(function(data) {
 			topTracks = data.body.items;
-		}).then(function() {
+		})
+		//Get playlist from the database
+		.then(function() {
 			return Playlist.find({});
 		})
 
-		.then(function(data) {
-
-			var playList = data;
-
-			req.io.on('connection', function(socket) {
-
-				console.log(req.user.username, 'connected');
-
-				socket.on('addToPlaylist', function(track) {
-					spotifyApi.getTrack(track)
-						.then(function(data) {
-							var addedTrack = data.body;
-							console.log(addedTrack);
-							new Playlist({
-								id: addedTrack.id,
-								uri: addedTrack.uri,
-								name: addedTrack.name,
-							}).save();
-
-							req.io.sockets.emit('addToPlaylist', addedTrack);
-						}).catch(function(error) {
-							console.error(error);
-						});
-				});
-			});
-
+		.then(function(playList) {
 			res.render('index', {
 				user: req.user,
 				tracks: topTracks,
