@@ -5,14 +5,12 @@ module.exports = function(io, spotifyApi) {
 	var playing = false;
 	io.on('connection', function(socket) {
 
-			socket.on('play', function(playIndex) {
-				console.log(playIndex);
-				io.sockets.emit('play', playIndex);
-				playing = true;
+		socket.on('play', function(playIndex) {
+			console.log(playIndex);
+			io.sockets.emit('play', playIndex);
+			playing = true;
 
-			});
-
-
+		});
 
 		socket.on('nextTrack', function(playList) {
 			if (playIndex >= (playList.length - 1)) {
@@ -29,7 +27,6 @@ module.exports = function(io, spotifyApi) {
 			} else if (playIndex === 0) {
 				playIndex = (playList.length - 1);
 			}
-
 			io.sockets.emit('prevTrack', playIndex);
 		});
 

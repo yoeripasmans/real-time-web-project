@@ -171,18 +171,18 @@ socket.on('addToPlaylist', function(data) {
 	removeButton.setAttribute("data-id", data._id);
 	item.appendChild(removeButton);
 	removeButton.addEventListener('click', removeFromPlaylist);
-
+	console.log(playList);
 });
 
 socket.on('removeFromPlaylist', function(id) {
 	var playlist = document.querySelector('.playlist');
 	var tracks = document.querySelectorAll(".playlist__track");
 
-	for (var i = 0; i < tracks.length; i++) {
-		if (tracks[i].getAttribute("data-id") == id) {
+	playList = playList.filter(function(item, i) {
+		if (tracks[i].getAttribute("data-id") !== id) {
+			return true;
+		} else {
 			playlist.removeChild(tracks[i]);
-			playList.splice(tracks[i], 1);
-			break;
 		}
-	}
+	});
 });
