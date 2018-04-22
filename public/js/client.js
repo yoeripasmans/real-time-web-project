@@ -70,9 +70,26 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 	};
 
 	socket.on('play', function(playIndex, currentTrack) {
+		console.log(currentTrack);
 		play({
 			playerInstance: player,
-			spotify_uri: playList[playIndex].uri,
+			spotify_uri: currentTrack.uri,
+		});
+		addPlayerDetails(currentTrack);
+	});
+
+	socket.on('nextTrack', function(playIndex, currentTrack) {
+		play({
+			playerInstance: player,
+			spotify_uri: currentTrack.uri,
+		});
+		addPlayerDetails(currentTrack);
+	});
+
+	socket.on('prevTrack', function(playIndex, currentTrack) {
+		play({
+			playerInstance: player,
+			spotify_uri: currentTrack.uri,
 		});
 		addPlayerDetails(currentTrack);
 	});
@@ -83,22 +100,6 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 
 	socket.on('resume', function() {
 		player.resume();
-	});
-
-	socket.on('nextTrack', function(playIndex, currentTrack) {
-		play({
-			playerInstance: player,
-			spotify_uri: playList[playIndex].uri,
-		});
-		addPlayerDetails(currentTrack);
-	});
-
-	socket.on('prevTrack', function(playIndex, currentTrack) {
-		play({
-			playerInstance: player,
-			spotify_uri: playList[playIndex].uri,
-		});
-		addPlayerDetails(currentTrack);
 	});
 
 
@@ -116,15 +117,15 @@ function addPlayerDetails(currentTrack) {
 
 //Events
 document.querySelector('.play-button').addEventListener('click', function() {
-	socket.emit('play', 0, playList);
+	socket.emit('play', 0);
 });
 
 document.querySelector('.next-button').addEventListener('click', function() {
-	socket.emit('nextTrack', playList);
+	socket.emit('nextTrack');
 });
 
 document.querySelector('.prev-button').addEventListener('click', function() {
-	socket.emit('prevTrack', playList);
+	socket.emit('prevTrack');
 });
 
 document.querySelector('.pause-button').addEventListener('click', function() {
@@ -148,7 +149,7 @@ function addToPlaylist() {
 
 //Add track to playlist and add html elements to visually respresent the track.
 socket.on('addToPlaylist', function(data) {
-	playList.push(data);
+
 	var list = document.querySelector('.playlist');
 
 	var item = document.createElement('li');
@@ -182,12 +183,11 @@ socket.on('removeFromPlaylist', function(id) {
 	var playlist = document.querySelector('.playlist');
 	var tracks = document.querySelectorAll(".playlist__track");
 
-	//Filter out the removed item
-	playList = playList.filter(function(item, i) {
-		if (tracks[i].getAttribute("data-id") !== id) {
-			return true;
-		} else {
+	//Delete the removed item
+	for (var i = 0; i < tracks.length; i++) {
+		if (tracks[i].getAttribute("data-id") === id) {
 			playlist.removeChild(tracks[i]);
 		}
-	});
+
+	}
 });

@@ -3,16 +3,21 @@ var Playlist = require('../models/playlist');
 module.exports = function(io, spotifyApi) {
 	var playIndex = 0;
 	var playing = false;
+	var playList = [];
 	io.on('connection', function(socket) {
 
-		socket.on('play', function(playIndex, playList) {
+		Playlist.find({}).then(function(results) {
+			playList = results;
+		});
+		console.log(playList);
+
+		socket.on('play', function(playIndex) {
 			var currentTrack = playList[playIndex];
 			io.sockets.emit('play', playIndex, currentTrack);
 			playing = true;
-
 		});
 
-		socket.on('nextTrack', function(playList) {
+		socket.on('nextTrack', function() {
 			if (playIndex >= (playList.length - 1)) {
 				playIndex = 0;
 			} else {
@@ -22,7 +27,7 @@ module.exports = function(io, spotifyApi) {
 			io.sockets.emit('nextTrack', playIndex, currentTrack);
 		});
 
-		socket.on('prevTrack', function(playList) {
+		socket.on('prevTrack', function() {
 			if (playIndex > 0) {
 				playIndex--;
 			} else if (playIndex === 0) {
@@ -47,6 +52,7 @@ module.exports = function(io, spotifyApi) {
 						})
 						.save()
 						.then(function(addedTrack) {
+							playList.push(addedTrack);
 							io.sockets.emit('addToPlaylist', addedTrack);
 						});
 
@@ -56,11 +62,18 @@ module.exports = function(io, spotifyApi) {
 		});
 
 		socket.on('removeFromPlaylist', function(trackId) {
+
 			var removedTrack = trackId;
+			//Remove track from database
 			Playlist.find({
 					_id: trackId
 				}).remove()
 				.then(function(trackId) {
+
+					//Filter out the removed item
+					playList = playList.filter(function(el) {
+						return el._id != removedTrack;
+					});
 
 					io.sockets.emit('removeFromPlaylist', removedTrack);
 				}).catch(function(error) {
