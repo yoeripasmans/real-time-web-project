@@ -7,6 +7,8 @@ var trackSchema = new Schema({
    name: String,
    id: String,
    uri: String,
+   artists: Object,
+   images: Array
 });
 // the schema is useless so far
 // we need to create a model using it

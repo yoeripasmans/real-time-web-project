@@ -5,9 +5,9 @@ module.exports = function(io, spotifyApi) {
 	var playing = false;
 	io.on('connection', function(socket) {
 
-		socket.on('play', function(playIndex) {
-			console.log(playIndex);
-			io.sockets.emit('play', playIndex);
+		socket.on('play', function(playIndex, playList) {
+			var currentTrack = playList[playIndex];
+			io.sockets.emit('play', playIndex, currentTrack);
 			playing = true;
 
 		});
@@ -18,7 +18,8 @@ module.exports = function(io, spotifyApi) {
 			} else {
 				playIndex++;
 			}
-			io.sockets.emit('nextTrack', playIndex);
+			var currentTrack = playList[playIndex];
+			io.sockets.emit('nextTrack', playIndex, currentTrack);
 		});
 
 		socket.on('prevTrack', function(playList) {
@@ -27,17 +28,22 @@ module.exports = function(io, spotifyApi) {
 			} else if (playIndex === 0) {
 				playIndex = (playList.length - 1);
 			}
-			io.sockets.emit('prevTrack', playIndex);
+			var currentTrack = playList[playIndex];
+			io.sockets.emit('prevTrack', playIndex, currentTrack);
 		});
 
 		socket.on('addToPlaylist', function(track) {
+			//Get track details
 			spotifyApi.getTrack(track)
 				.then(function(data) {
-
+					console.log(data);
+					//Add track to the database
 					var addedTrack = new Playlist({
 							id: data.body.id,
 							uri: data.body.uri,
 							name: data.body.name,
+							artists: data.body.artists,
+							images: data.body.album.images,
 						})
 						.save()
 						.then(function(addedTrack) {

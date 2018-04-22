@@ -6,10 +6,6 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 		getOAuthToken: cb => {
 			cb(token);
 		},
-		paused: true,
-		track_window: {
-			current_track: playList[0]
-		}
 	});
 
 	// Error handling
@@ -43,7 +39,6 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 	player.addListener('ready', ({
 		device_id
 	}) => {
-
 		console.log('Ready with Device ID', device_id);
 	});
 
@@ -74,13 +69,12 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 		});
 	};
 
-	socket.on('play', function(playIndex) {
+	socket.on('play', function(playIndex, currentTrack) {
 		play({
 			playerInstance: player,
 			spotify_uri: playList[playIndex].uri,
 		});
-
-		// player.pause();
+		addPlayerDetails(currentTrack);
 	});
 
 	socket.on('pause', function() {
@@ -91,30 +85,41 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 		player.resume();
 	});
 
-	socket.on('nextTrack', function(playIndex) {
-		console.log(playIndex);
+	socket.on('nextTrack', function(playIndex, currentTrack) {
 		play({
 			playerInstance: player,
 			spotify_uri: playList[playIndex].uri,
 		});
+		addPlayerDetails(currentTrack);
 	});
 
-	socket.on('prevTrack', function(playIndex) {
-		console.log(playIndex);
+	socket.on('prevTrack', function(playIndex, currentTrack) {
 		play({
 			playerInstance: player,
 			spotify_uri: playList[playIndex].uri,
 		});
+		addPlayerDetails(currentTrack);
 	});
+
 
 };
 
+function addPlayerDetails(currentTrack) {
+	var trackNameEl = document.querySelector('.player-details__track-name');
+	var artistsEl = document.querySelector('.player-details__artist-name');
+	artistNames = currentTrack.artists.map(a => a.name);
+	artistNames.toString();
+	trackNameEl.textContent = currentTrack.name;
+	artistsEl.textContent = artistNames;
+	console.log(artistNames);
+}
+
 //Events
 document.querySelector('.play-button').addEventListener('click', function() {
-	socket.emit('play', 0);
+	socket.emit('play', 0, playList);
 });
 
-document.querySelector('.next-button').addEventListener('click', function(playlist) {
+document.querySelector('.next-button').addEventListener('click', function() {
 	socket.emit('nextTrack', playList);
 });
 
@@ -131,18 +136,6 @@ document.querySelector('.resume-button').addEventListener('click', function() {
 });
 
 //Create eventlistener to add playbuttons
-var removeButton = document.querySelectorAll('.remove-button');
-for (var i = 0; i < removeButton.length; i++) {
-	removeButton[i].addEventListener('click', removeFromPlaylist);
-}
-
-//Emit clicked track with the id of that track.
-function removeFromPlaylist() {
-	console.log(this);
-	socket.emit('removeFromPlaylist', this.getAttribute('data-id'));
-}
-
-//Create eventlistener to add playbuttons
 var addButton = document.querySelectorAll('.add-button');
 for (var i = 0; i < addButton.length; i++) {
 	addButton[i].addEventListener('click', addToPlaylist);
@@ -153,6 +146,7 @@ function addToPlaylist() {
 	socket.emit('addToPlaylist', this.getAttribute('data-id'));
 }
 
+//Add track to playlist and add html elements to visually respresent the track.
 socket.on('addToPlaylist', function(data) {
 	playList.push(data);
 	var list = document.querySelector('.playlist');
@@ -171,13 +165,24 @@ socket.on('addToPlaylist', function(data) {
 	removeButton.setAttribute("data-id", data._id);
 	item.appendChild(removeButton);
 	removeButton.addEventListener('click', removeFromPlaylist);
-	console.log(playList);
 });
+
+//Create eventlistener to add playbuttons
+var removeButton = document.querySelectorAll('.remove-button');
+for (var i = 0; i < removeButton.length; i++) {
+	removeButton[i].addEventListener('click', removeFromPlaylist);
+}
+
+//Emit clicked track with the id of that track.
+function removeFromPlaylist() {
+	socket.emit('removeFromPlaylist', this.getAttribute('data-id'));
+}
 
 socket.on('removeFromPlaylist', function(id) {
 	var playlist = document.querySelector('.playlist');
 	var tracks = document.querySelectorAll(".playlist__track");
 
+	//Filter out the removed item
 	playList = playList.filter(function(item, i) {
 		if (tracks[i].getAttribute("data-id") !== id) {
 			return true;
