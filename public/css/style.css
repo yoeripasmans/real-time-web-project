@@ -33,25 +33,25 @@ header {
 
 header .profile-details {
     margin-left: auto;
-	margin-right: 1em;
-	color: #fff;
-	display: flex;
+    margin-right: 1em;
+    color: #fff;
+    display: flex;
     align-items: center;
 }
 
 .profile-details img {
-	border-radius: 50%;
-	margin-right: 0.6em;
+    border-radius: 50%;
+    margin-right: 0.6em;
 }
 
 .player-details__track-name {
-	font-size: 1.08em;
+    font-size: 1.08em;
 }
 
 .player-details__artist-name {
-	margin-top: 0.3em;
-	opacity: 0.8;
-	font-size: 0.96em;
+    margin-top: 0.3em;
+    opacity: 0.8;
+    font-size: 0.96em;
 }
 
 main {
@@ -63,7 +63,7 @@ main>section {
     width: 50vw;
     height: calc(100vh - 6em);
     padding: 2em;
-    background-color: #232326;
+    background-color: #1b1b1b;
     color: #fff;
 }
 
@@ -75,7 +75,7 @@ main>section {
     bottom: 0;
     height: 6em;
     width: 100%;
-    background-color: #000000;
+    background-color: #232326;
     color: #fff;
 }
 
@@ -101,7 +101,7 @@ main>section {
 }
 
 .player-controls {
-	position: fixed;
+    position: fixed;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -128,31 +128,48 @@ button {
     cursor: pointer;
 }
 
+.remove-button {
+    margin-left: 0.5em;
+}
+
+.remove-button img {
+    width: 0.7em;
+}
+
 .hidden {
-	display: none;
+    display: none;
 }
 
 .login {
-	width: 100vw;
-	height: 100vh;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-direction: column;
-	background-color: #232326;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background-color: #333;
 }
 
 .login h1 {
-	color: #fff;
+    color: #fff;
 }
+
 .login a {
-	margin-top: 1em;
-	width: 15em;
-    height: 3.5em;
-    background-color: #65D36E;
-    color: #000;
-    display: flex;
+    background-color: transparent;
     text-decoration: none;
-    align-items: center;
-    justify-content: center;
+    border: 0.2em solid #1ecd97;
+    color: #1ecd97;
+    cursor: pointer;
+    padding: 0.7em 1.5em;
+    transition: all 0.25s ease;
+    text-transform: uppercase;
+}
+
+.login a:hover {
+    background: #1ecd97;
+    color: #1b1b1b;
+}
+
+.playlist__track.active {
+	color: #1ecd97;
 }

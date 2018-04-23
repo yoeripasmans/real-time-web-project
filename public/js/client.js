@@ -33,17 +33,17 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 
 	// Playback status updates
 	player.addListener('player_state_changed', state => {
-		//
-		// if(state.position == state.duration){
-		// 	socket.emit('nextTrack');
-		// }
+		if (state != null && state.position == 0 && state.duration == 0 && state.paused == true) {
+			socket.emit('nextTrack');
+		}
+
 	});
 
 	// Ready
 	player.addListener('ready', ({
 		device_id
 	}) => {
-		// socket.emit('getState', device_id, token);
+		// socket.emit('getState');
 		console.log('Ready with Device ID', device_id);
 	});
 
@@ -78,6 +78,7 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 		console.log('state');
 		addPlayerDetails(currentTrack);
 		togglePlayerButtons(playStatus);
+		setActiveTrack(currentTrack);
 	});
 
 	socket.on('play', function(playIndex, currentTrack, playStatus) {
@@ -87,26 +88,30 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 		});
 		addPlayerDetails(currentTrack);
 		togglePlayerButtons(playStatus);
+		setActiveTrack(currentTrack);
 	});
 
-	function togglePlayerButtons(playing){
-		if (playing == true) {
-			playButton.classList.add("hidden");
-			stopButton.classList.remove("hidden");
-		} else {
-			stopButton.classList.add("hidden");
-			playButton.classList.remove("hidden");
+
+	function setActiveTrack(currentTrack) {
+		var tracks = document.querySelectorAll('.playlist__track');
+		for (var i = 0; i < tracks.length; i++) {
+			if (tracks[i].getAttribute("data-id") === currentTrack._id) {
+				tracks[i].classList.add('active');
+			} else {
+				tracks[i].classList.remove('active');
+			}
 		}
+
 	}
 
 	socket.on('nextTrack', function(playIndex, currentTrack, playStatus) {
-		console.log(playStatus);
 		play({
 			playerInstance: player,
 			spotify_uri: currentTrack.uri,
 		});
 		addPlayerDetails(currentTrack);
 		togglePlayerButtons(playStatus);
+		setActiveTrack(currentTrack);
 	});
 
 	socket.on('prevTrack', function(playIndex, currentTrack, playStatus) {
@@ -116,6 +121,7 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 		});
 		addPlayerDetails(currentTrack);
 		togglePlayerButtons(playStatus);
+		setActiveTrack(currentTrack);
 	});
 
 	socket.on('pause', function(playStatus) {
@@ -171,6 +177,16 @@ window.addEventListener('load', function() {
 	socket.emit('getState');
 });
 
+function togglePlayerButtons(playing) {
+	if (playing == true) {
+		playButton.classList.add("hidden");
+		stopButton.classList.remove("hidden");
+	} else {
+		stopButton.classList.add("hidden");
+		playButton.classList.remove("hidden");
+	}
+}
+
 //Create eventlistener to add playbuttons
 var addButton = document.querySelectorAll('.add-button');
 for (var i = 0; i < addButton.length; i++) {
@@ -197,10 +213,14 @@ socket.on('addToPlaylist', function(data) {
 	item.appendChild(itemText);
 
 	var removeButton = document.createElement('button');
-	removeButton.textContent = "Remove from playlist";
+	removeButton.classList.add('remove-button');
 	removeButton.setAttribute("data-id", data._id);
 	item.appendChild(removeButton);
 	removeButton.addEventListener('click', removeFromPlaylist);
+
+	var icon = document.createElement('img');
+	icon.src = 'icons/cancel.svg';
+	removeButton.appendChild(icon);
 });
 
 //Create eventlistener to add playbuttons
