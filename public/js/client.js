@@ -74,42 +74,53 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 		});
 	};
 
-	socket.on('getState', function(playIndex, currentTrack) {
+	socket.on('getState', function(playIndex, currentTrack, playStatus) {
 		console.log('state');
 		addPlayerDetails(currentTrack);
+		togglePlayerButtons(playStatus);
 	});
 
-	socket.on('play', function(playIndex, currentTrack) {
+	socket.on('play', function(playIndex, currentTrack, playStatus) {
 		play({
 			playerInstance: player,
 			spotify_uri: currentTrack.uri,
 		});
 		addPlayerDetails(currentTrack);
-
-		playButton.classList.add("hidden");
-		stopButton.classList.remove("hidden");
+		togglePlayerButtons(playStatus);
 	});
 
-	socket.on('nextTrack', function(playIndex, currentTrack) {
+	function togglePlayerButtons(playing){
+		if (playing == true) {
+			playButton.classList.add("hidden");
+			stopButton.classList.remove("hidden");
+		} else {
+			stopButton.classList.add("hidden");
+			playButton.classList.remove("hidden");
+		}
+	}
+
+	socket.on('nextTrack', function(playIndex, currentTrack, playStatus) {
+		console.log(playStatus);
 		play({
 			playerInstance: player,
 			spotify_uri: currentTrack.uri,
 		});
 		addPlayerDetails(currentTrack);
+		togglePlayerButtons(playStatus);
 	});
 
-	socket.on('prevTrack', function(playIndex, currentTrack) {
+	socket.on('prevTrack', function(playIndex, currentTrack, playStatus) {
 		play({
 			playerInstance: player,
 			spotify_uri: currentTrack.uri,
 		});
 		addPlayerDetails(currentTrack);
+		togglePlayerButtons(playStatus);
 	});
 
-	socket.on('pause', function() {
+	socket.on('pause', function(playStatus) {
 		player.pause();
-		playButton.classList.remove("hidden");
-		stopButton.classList.add("hidden");
+		togglePlayerButtons(playStatus);
 	});
 
 	socket.on('resume', function() {

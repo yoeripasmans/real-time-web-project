@@ -15,8 +15,7 @@ module.exports = function(io, spotifyApi) {
 
 		socket.on('getState', function(device_id) {
 			currentTrack = playList[playIndex];
-			io.sockets.emit('getState', playIndex, currentTrack);
-
+			io.sockets.emit('getState', playIndex, currentTrack, playing);
 			// if (playing === true) {
 			// 	io.sockets.emit('play', playIndex, currentTrack);
 			// 	playing = true;
@@ -26,8 +25,8 @@ module.exports = function(io, spotifyApi) {
 
 		socket.on('play', function() {
 			currentTrack = playList[playIndex];
-			io.sockets.emit('play', playIndex, currentTrack);
 			playing = true;
+			io.sockets.emit('play', playIndex, currentTrack, playing);
 		});
 
 		socket.on('nextTrack', function() {
@@ -37,7 +36,8 @@ module.exports = function(io, spotifyApi) {
 				playIndex++;
 			}
 			currentTrack = playList[playIndex];
-			io.sockets.emit('nextTrack', playIndex, currentTrack);
+			playing = true;
+			io.sockets.emit('nextTrack', playIndex, currentTrack, playing);
 		});
 
 		socket.on('prevTrack', function() {
@@ -47,7 +47,8 @@ module.exports = function(io, spotifyApi) {
 				playIndex = (playList.length - 1);
 			}
 			currentTrack = playList[playIndex];
-			io.sockets.emit('prevTrack', playIndex, currentTrack);
+			playing = true;
+			io.sockets.emit('prevTrack', playIndex, currentTrack, playing);
 		});
 
 		socket.on('addToPlaylist', function(track) {

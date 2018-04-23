@@ -131,3 +131,28 @@ button {
 .hidden {
 	display: none;
 }
+
+.login {
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	background-color: #232326;
+}
+
+.login h1 {
+	color: #fff;
+}
+.login a {
+	margin-top: 1em;
+	width: 15em;
+    height: 3.5em;
+    background-color: #65D36E;
+    color: #000;
+    display: flex;
+    text-decoration: none;
+    align-items: center;
+    justify-content: center;
+}
