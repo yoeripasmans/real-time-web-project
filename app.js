@@ -37,7 +37,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Make io accessible to our router
+// Make spotifyApi accessible to our router
 app.use(function(req,res,next){
     req.spotifyApi = spotifyApi;
     next();

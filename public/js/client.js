@@ -1,5 +1,6 @@
 var socket = io();
 
+
 window.onSpotifyWebPlaybackSDKReady = () => {
 	const player = new Spotify.Player({
 		name: 'Web Playback SDK Quick Start Player',
@@ -32,13 +33,17 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 
 	// Playback status updates
 	player.addListener('player_state_changed', state => {
-		console.log(state);
+		//
+		// if(state.position == state.duration){
+		// 	socket.emit('nextTrack');
+		// }
 	});
 
 	// Ready
 	player.addListener('ready', ({
 		device_id
 	}) => {
+		// socket.emit('getState', device_id, token);
 		console.log('Ready with Device ID', device_id);
 	});
 
@@ -69,13 +74,20 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 		});
 	};
 
+	socket.on('getState', function(playIndex, currentTrack) {
+		console.log('state');
+		addPlayerDetails(currentTrack);
+	});
+
 	socket.on('play', function(playIndex, currentTrack) {
-		console.log(currentTrack);
 		play({
 			playerInstance: player,
 			spotify_uri: currentTrack.uri,
 		});
 		addPlayerDetails(currentTrack);
+
+		playButton.classList.add("hidden");
+		stopButton.classList.remove("hidden");
 	});
 
 	socket.on('nextTrack', function(playIndex, currentTrack) {
@@ -96,6 +108,8 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 
 	socket.on('pause', function() {
 		player.pause();
+		playButton.classList.remove("hidden");
+		stopButton.classList.add("hidden");
 	});
 
 	socket.on('resume', function() {
@@ -108,32 +122,42 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 function addPlayerDetails(currentTrack) {
 	var trackNameEl = document.querySelector('.player-details__track-name');
 	var artistsEl = document.querySelector('.player-details__artist-name');
+	var imgEl = document.querySelector('.player-details__track-img');
 	artistNames = currentTrack.artists.map(a => a.name);
 	artistNames.toString();
 	trackNameEl.textContent = currentTrack.name;
-	artistsEl.textContent = artistNames;
-	console.log(artistNames);
+	artistsEl.textContent = artistNames.join(', ');
+	imgEl.src = currentTrack.images[1].url;
 }
 
+var playButton = document.querySelector('.play-button');
+var stopButton = document.querySelector('.stop-button');
+var nextButton = document.querySelector('.next-button');
+var prevButton = document.querySelector('.prev-button');
+
 //Events
-document.querySelector('.play-button').addEventListener('click', function() {
-	socket.emit('play', 0);
+playButton.addEventListener('click', function() {
+	socket.emit('play');
 });
 
-document.querySelector('.next-button').addEventListener('click', function() {
+nextButton.addEventListener('click', function() {
 	socket.emit('nextTrack');
 });
 
-document.querySelector('.prev-button').addEventListener('click', function() {
+prevButton.addEventListener('click', function() {
 	socket.emit('prevTrack');
 });
 
-document.querySelector('.pause-button').addEventListener('click', function() {
+stopButton.addEventListener('click', function() {
 	socket.emit('pause');
 });
 
-document.querySelector('.resume-button').addEventListener('click', function() {
-	socket.emit('resume');
+// document.querySelector('.resume-button').addEventListener('click', function() {
+// 	socket.emit('resume');
+// });
+
+window.addEventListener('load', function() {
+	socket.emit('getState');
 });
 
 //Create eventlistener to add playbuttons

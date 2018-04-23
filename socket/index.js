@@ -4,15 +4,28 @@ module.exports = function(io, spotifyApi) {
 	var playIndex = 0;
 	var playing = false;
 	var playList = [];
+
+	Playlist.find({}).then(function(results) {
+		playList = results;
+	});
+
+	var currentTrack = playList[playIndex];
+
 	io.on('connection', function(socket) {
 
-		Playlist.find({}).then(function(results) {
-			playList = results;
-		});
-		console.log(playList);
+		socket.on('getState', function(device_id) {
+			currentTrack = playList[playIndex];
+			io.sockets.emit('getState', playIndex, currentTrack);
 
-		socket.on('play', function(playIndex) {
-			var currentTrack = playList[playIndex];
+			// if (playing === true) {
+			// 	io.sockets.emit('play', playIndex, currentTrack);
+			// 	playing = true;
+			// }
+
+		});
+
+		socket.on('play', function() {
+			currentTrack = playList[playIndex];
 			io.sockets.emit('play', playIndex, currentTrack);
 			playing = true;
 		});
@@ -23,7 +36,7 @@ module.exports = function(io, spotifyApi) {
 			} else {
 				playIndex++;
 			}
-			var currentTrack = playList[playIndex];
+			currentTrack = playList[playIndex];
 			io.sockets.emit('nextTrack', playIndex, currentTrack);
 		});
 
@@ -33,7 +46,7 @@ module.exports = function(io, spotifyApi) {
 			} else if (playIndex === 0) {
 				playIndex = (playList.length - 1);
 			}
-			var currentTrack = playList[playIndex];
+			currentTrack = playList[playIndex];
 			io.sockets.emit('prevTrack', playIndex, currentTrack);
 		});
 
@@ -41,7 +54,6 @@ module.exports = function(io, spotifyApi) {
 			//Get track details
 			spotifyApi.getTrack(track)
 				.then(function(data) {
-					console.log(data);
 					//Add track to the database
 					var addedTrack = new Playlist({
 							id: data.body.id,
@@ -83,6 +95,7 @@ module.exports = function(io, spotifyApi) {
 
 		socket.on('pause', function() {
 			io.sockets.emit('pause');
+			playing = false;
 		});
 
 		socket.on('resume', function() {

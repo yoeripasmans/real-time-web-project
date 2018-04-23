@@ -19,12 +19,12 @@ router.get('/', ensureAuthenticated, function(req, res) {
 		.then(function() {
 			return Playlist.find({});
 		}).then(function(playList){
-			// var uri = playList.map(a => a.uri);
-			//
-			// // console.log(playList.uri);
-			// req.spotifyApi.play({
-			// 	uris: uri
-			// });
+			var uri = playList.map(a => a.uri);
+
+			// console.log(playList.uri);
+			req.spotifyApi.play({
+				uris: uri
+			});
 			return playList;
 		})
 
