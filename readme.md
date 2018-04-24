@@ -90,6 +90,7 @@ Lastly I needed to add my environment variables to Heroku because they're not co
 - Volume control where users with rights can mute other connected clients.
 - See who's online.
 - See who added a new track to the current playlist.
+- Popup if player already playing to let the user know that there's sound going to play.
 
 ## Built With
 

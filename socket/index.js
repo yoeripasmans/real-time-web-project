@@ -19,10 +19,15 @@ module.exports = function(io, spotifyApi) {
 			currentTrack = playList[playIndex];
 			io.sockets.emit('getState', playIndex, currentTrack, playing);
 
-			// if (playing === true) {
-			// 	io.sockets.emit('play', playIndex, currentTrack, playing);
-			// 	playing = true;
-			// }
+		});
+
+		socket.on('getPlayingState', function(device_id) {
+			currentTrack = playList[playIndex];
+
+			if (playing === true) {
+				io.sockets.emit('play', playIndex, currentTrack, playing);
+				playing = true;
+			}
 
 		});
 

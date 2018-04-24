@@ -130,6 +130,7 @@ button {
     text-decoration: none;
     text-indent: 0;
     cursor: pointer;
+	outline: 0;
 }
 
 .remove-button {
@@ -166,7 +167,6 @@ button {
     cursor: pointer;
     padding: 0.7em 1.5em;
     transition: all 0.25s ease;
-    text-transform: uppercase;
 }
 
 .login a:hover {

@@ -43,7 +43,7 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 	player.addListener('ready', ({
 		device_id
 	}) => {
-		// socket.emit('getState');
+		socket.emit('getPlayingState');
 		console.log('Ready with Device ID', device_id);
 	});
 
@@ -75,7 +75,6 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 	};
 
 	socket.on('getState', function(playIndex, currentTrack, playStatus) {
-		console.log('state');
 		addPlayerDetails(currentTrack);
 		togglePlayerButtons(playStatus);
 		setActiveTrack(currentTrack);
