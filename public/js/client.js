@@ -2,7 +2,6 @@ Offline.options = {checks: {xhr: {url: '/connection-test'}}};
 
 var socket = io();
 
-
 window.onSpotifyWebPlaybackSDKReady = () => {
 	const player = new Spotify.Player({
 		name: 'Web Playback SDK Quick Start Player',
