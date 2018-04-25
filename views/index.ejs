@@ -4,6 +4,9 @@
 <head>
 	<title>Spotify together</title>
 	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="css/offline-language-english.css">
+	<link rel="stylesheet" href="css/offline-theme-dark.css">
+
 </head>
 
 <body>
@@ -22,7 +25,7 @@
 
 					<li>
 						<span><%= tracks[i].name %></span>
-						<button class="add-button" data-id="<%=  tracks[i].id %>"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 31.444 31.444" width="12" height="12"><path d="M1.119 16.841c-.619 0-1.111-.508-1.111-1.127s.492-1.111 1.111-1.111h13.475V1.127C14.595.508 15.103 0 15.722 0c.619 0 1.111.508 1.111 1.127v13.476h13.475c.619 0 1.127.492 1.127 1.111s-.508 1.127-1.127 1.127H16.833v13.476c0 .619-.492 1.127-1.111 1.127s-1.127-.508-1.127-1.127V16.841H1.119z" fill="#FFF"/></svg></button>
+						<button class="add-button" data-id="<%=  tracks[i].id %>"><svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 31.444 31.444" width="12" height="12"><path d="M1.119 16.841c-.619 0-1.111-.508-1.111-1.127s.492-1.111 1.111-1.111h13.475V1.127C14.595.508 15.103 0 15.722 0c.619 0 1.111.508 1.111 1.127v13.476h13.475c.619 0 1.127.492 1.127 1.111s-.508 1.127-1.127 1.127H16.833v13.476c0 .619-.492 1.127-1.111 1.127s-1.127-.508-1.127-1.127V16.841H1.119z" fill="#FFF"/></svg></button>
 					</li>
 
 					<% } %>
@@ -62,12 +65,15 @@
 			<!-- <button class="resume-button">Resume</button> -->
 			<button class="next-button"><svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 487.913 487.913" width="14" height="14"><path d="M22.987 468.187C10.291 468.187 0 457.896 0 445.202V42.949c0-12.695 10.291-22.988 22.987-22.988l373.519 206.875s17.239 17.238 0 34.477C379.268 278.552 22.987 468.187 22.987 468.187zM411.09 44.64c0-13.76 11.155-24.915 24.915-24.915h26.993c13.76 0 24.915 11.155 24.915 24.915v398.633c0 13.76-11.155 24.915-24.915 24.915h-26.993c-13.76 0-24.915-11.155-24.915-24.915V44.64z" fill="#fff"/></svg></button>
 		</div>
-		<span></span>
+
 	</div>
+	<span class="server-offline-error hidden">Server offline</span>
+	<span class="client-online-status">Offline</span>
 	<script>
 		var token =
 			<%- JSON.stringify(user.accessToken) %>
 	</script>
+	<script src="js/offline.min.js"></script>
 	<script src="https://sdk.scdn.co/spotify-player.js"></script>
 	<script src="/socket.io/socket.io.js"></script>
 	<script src="js/client.js"></script>

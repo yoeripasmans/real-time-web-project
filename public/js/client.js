@@ -1,3 +1,5 @@
+Offline.options = {checks: {xhr: {url: '/connection-test'}}};
+
 var socket = io();
 
 
@@ -244,4 +246,57 @@ socket.on('removeFromPlaylist', function(id) {
 		}
 
 	}
+});
+
+//Offline server handling
+
+var serverError = document.querySelector('.server-offline-error');
+var playerControls = document.querySelector('.player-controls');
+
+socket.on('connect_error', function() {
+	//show error
+	serverError.classList.remove('hidden');
+	//hide controls
+	for (var i = 0; i < removeButton.length; i++) {
+		removeButton[i].classList.add('hidden');
+	}
+	for (i = 0; i < addButton.length; i++) {
+		addButton[i].classList.add('hidden');
+	}
+	//Remove player controls
+	playerControls.classList.add('hidden');
+  console.log('Is The Server Online? ' + socket.connected);
+});
+
+socket.on('connect', function() {
+	//remove error
+	serverError.classList.add('hidden');
+	//show controls
+	for (var i = 0; i < removeButton.length; i++) {
+		removeButton[i].classList.remove('hidden');
+	}
+	for (i = 0; i < addButton.length; i++) {
+		addButton[i].classList.remove('hidden');
+	}
+	//Add player controls
+	playerControls.classList.remove('hidden');
+	socket.emit('getState');
+  console.log('Is The Server Online? ' + socket.connected);
+});
+
+//Offline client handling
+
+Offline.on('up', function() {
+    socket.emit('getState');
+});
+
+Offline.on('down', function() {
+	for (var i = 0; i < removeButton.length; i++) {
+		removeButton[i].classList.add('hidden');
+	}
+	for (i = 0; i < addButton.length; i++) {
+		addButton[i].classList.add('hidden');
+	}
+	//Remove player controls
+	playerControls.classList.add('hidden');
 });
