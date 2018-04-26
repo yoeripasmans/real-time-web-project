@@ -75,6 +75,31 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 		});
 	};
 
+	const seek = ({
+		position_ms,
+		playerInstance: {
+			_options: {
+				getOAuthToken,
+				id
+			}
+		}
+	}) => {
+		getOAuthToken(token => {
+
+			fetch(`https://api.spotify.com/v1/me/player/seek?device_id=${id}`, {
+				method: 'PUT',
+				body: JSON.stringify({
+					position_ms: [position_ms]
+				}),
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${token}`
+				},
+			});
+		});
+	};
+
+
 	socket.on('getState', function(playIndex, currentTrack, playStatus) {
 		addPlayerDetails(currentTrack);
 		togglePlayerButtons(playStatus);
@@ -140,7 +165,7 @@ function addPlayerDetails(currentTrack) {
 	var trackNameEl = document.querySelector('.player-details__track-name');
 	var artistsEl = document.querySelector('.player-details__artist-name');
 	var imgEl = document.querySelector('.player-details__track-img');
-	artistNames = currentTrack.artists.map(a => a.name);
+	var artistNames = currentTrack.artists.map(a => a.name);
 	artistNames.toString();
 	trackNameEl.textContent = currentTrack.name;
 	artistsEl.textContent = artistNames.join(', ');
@@ -200,7 +225,7 @@ function addToPlaylist() {
 
 //Add track to playlist and add html elements to visually respresent the track.
 socket.on('addToPlaylist', function(data) {
-
+	console.log(data);
 	var list = document.querySelector('.playlist');
 
 	var item = document.createElement('li');
@@ -208,9 +233,15 @@ socket.on('addToPlaylist', function(data) {
 	item.setAttribute("data-id", data._id);
 	list.appendChild(item);
 
-	var itemText = document.createElement('span');
-	itemText.textContent = data.name;
-	item.appendChild(itemText);
+	var trackName = document.createElement('span');
+	trackName.textContent = data.name;
+	item.appendChild(trackName);
+
+	// var artistsEl = document.createElement('span');
+	// var artistNames = data.artists.map(a => a.name);
+	// artistNames.toString();
+	// artistsEl.textContent = artistNames.join(', ');
+	// item.appendChild(artistsEl);
 
 	var removeButton = document.createElement('button');
 	removeButton.classList.add('remove-button');

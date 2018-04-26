@@ -7,7 +7,7 @@ module.exports = function(io, spotifyApi) {
 
 	Playlist.find({}).then(function(results) {
 		playList = results;
-	}).catch(function(error){
+	}).catch(function(error) {
 		console.log(error);
 	});
 
@@ -25,6 +25,7 @@ module.exports = function(io, spotifyApi) {
 			currentTrack = playList[playIndex];
 
 			if (playing === true) {
+
 				socket.emit('play', playIndex, currentTrack, playing);
 				playing = true;
 			}
