@@ -71,7 +71,7 @@ main {
 
 main>section {
     width: 50vw;
-    min-height: calc(100vh - 6em);
+    min-height: calc(100vh + 6em);
     padding: 2em;
     background-color: #1b1b1b;
     color: #fff;

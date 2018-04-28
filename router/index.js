@@ -17,8 +17,9 @@ router.get('/', ensureAuthenticated, function(req, res) {
 		})
 		//Get playlist from the database
 		.then(function() {
-			return Playlist.find({});
+			return Playlist.find({}).sort({ createdAt: 'asc' });
 		}).then(function(playList){
+			console.log(playList);
 			// var uri = playList.map(a => a.uri);
 			//
 			// // console.log(playList.uri);

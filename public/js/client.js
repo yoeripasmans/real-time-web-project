@@ -198,9 +198,9 @@ stopButton.addEventListener('click', function() {
 // 	socket.emit('resume');
 // });
 
-window.addEventListener('load', function() {
-	socket.emit('getState');
-});
+// window.addEventListener('load', function() {
+// 	socket.emit('getState');
+// });
 
 function togglePlayerButtons(playing) {
 	if (playing == true) {
@@ -225,7 +225,6 @@ function addToPlaylist() {
 
 //Add track to playlist and add html elements to visually respresent the track.
 socket.on('addToPlaylist', function(data) {
-	console.log(data);
 	var list = document.querySelector('.playlist');
 
 	var item = document.createElement('li');
@@ -299,6 +298,7 @@ socket.on('connect_error', function() {
 });
 
 socket.on('connect', function() {
+	socket.emit('getState');
 	//remove error
 	serverError.classList.add('hidden');
 	//show controls
@@ -310,7 +310,6 @@ socket.on('connect', function() {
 	}
 	//Add player controls
 	playerControls.classList.remove('hidden');
-	socket.emit('getState');
   console.log('Is The Server Online? ' + socket.connected);
 });
 

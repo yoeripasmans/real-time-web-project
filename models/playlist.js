@@ -9,7 +9,7 @@ var trackSchema = new Schema({
    uri: String,
    artists: Object,
    images: Array
-});
+}, {timestamps: true});
 // the schema is useless so far
 // we need to create a model using it
 var playlist = mongoose.model('playlist', trackSchema);

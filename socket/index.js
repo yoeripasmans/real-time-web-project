@@ -5,13 +5,16 @@ module.exports = function(io, spotifyApi) {
 	var playing = false;
 	var playList = [];
 
-	Playlist.find({}).then(function(results) {
+	Playlist.find({}).sort({
+		createdAt: 'asc'
+	}).then(function(results) {
 		playList = results;
 	}).catch(function(error) {
 		console.log(error);
 	});
 
 	var currentTrack = playList[playIndex];
+
 
 	io.on('connection', function(socket) {
 
@@ -84,7 +87,7 @@ module.exports = function(io, spotifyApi) {
 		});
 
 		socket.on('removeFromPlaylist', function(trackId) {
-
+			console.log(playIndex);
 			var removedTrack = trackId;
 			//Remove track from database
 			Playlist.find({
